@@ -1,0 +1,219 @@
+---
+title: "TDA_flask_exp"
+author: "Erik Bjurström"
+date: "2023-03-08"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r libraries, echo=F}
+#Loads all the libraries needed for analysis
+library(DESeq2,warn.conflicts = F)
+library(tidyverse,warn.conflicts = F)
+library(tximport,warn.conflicts = F)
+library(ashr)
+library(knitr,warn.conflicts = F)
+```
+
+```{r Function scripts, echo = F}
+# Imports all the R functions in this Rmd from subdir "R_scripts"
+file.sources = list.files("./scripts",pattern = "*.R",full.names = T)
+sapply(file.sources, source, .GlobalEnv)
+```
+
+```{r Extract count data, echo=F}
+# Finds all folders in /data that ends with "salmon", i.e. the folders with the
+# quant.sf files which contains counts mapped to genes.
+
+samples_1 <- list.files(path = "./data/Exp1", full.names = T, pattern = "salmon$")
+files_1 <- file.path(samples_1, "quant.sf")
+
+# Names each entry in "files" to the sample name
+# e.g. ./data/T1_post.salmon/quant.sf -> T1_post
+names(files_1) <- str_replace(samples_1, "./data/Exp1/","") %>%
+  str_replace(".salmon", "")
+
+# "salmon_tx2gene.tsv" contains the Gene_stable_ID and Gene_name of each gene
+tx2gene <- read.delim("./data/db/salmon_tx2gene.tsv", sep = "\t", quote = "")
+
+# Imports count data from each quant.sf and names each gene using 
+# "salmon_tx2gene.tsv"
+txi_1 <- tximport(files_1, type="salmon", 
+                tx2gene = tx2gene[,c("tx_id", "ensgene", "symbol")], 
+                countsFromAbundance = "lengthScaledTPM")
+
+# Rounds counts to integers 
+data <- txi_1$counts %>% 
+  round() %>% 
+  data.frame()
+```
+
+```{r Loads meta data}
+# Load sample info, used when contrasting samples using DESeq2
+meta_1 <- read.csv("./data/Exp1/Sample_info1.csv", sep = ",", quote ="", 
+                 row.names = colnames(txi_1$counts)) %>% 
+                      dplyr::select(c("Strain", "Phase"))
+```
+
+```{r Verify meta, echo=F}
+# Verifies that all column names in the data matches the row names in the
+# metadata file
+
+all(colnames(txi_1$counts) %in% rownames(meta_1))
+all(colnames(txi_1$counts) == rownames(meta_1))
+```
+
+```{r Outlier removal}
+outliers_1 = c()
+files_clean_1 <- files_1[!(names(files_1) %in% outliers_1)]
+
+txi_clean_1 <- tximport(files_clean_1, type="salmon", 
+                tx2gene = tx2gene[,c("tx_id", "ensgene", "symbol")], 
+                countsFromAbundance = "lengthScaledTPM")
+
+meta_clean_1 <- meta_1[!(rownames(meta_1) %in% outliers_1),]
+
+
+all(colnames(txi_clean_1$counts) %in% rownames(meta_clean_1))
+all(colnames(txi_clean_1$counts) == rownames(meta_clean_1))
+```
+
+```{r DDS, echo=F}
+# Create DESeq2Dataset object
+dds_1 <- DESeqDataSetFromTximport(txi_clean_1, colData = meta_clean_1, design = ~Strain + Phase + Strain:Phase)
+dds_1$group <- factor(paste0(dds_1$Strain, dds_1$Phase))
+design(dds_1) <- ~group
+dds_1 <- estimateSizeFactors(dds_1)
+
+# Uses Median of Ratios method
+normalized_counts_1 <- counts(dds_1, normalized = T)
+normalized_counts_1 <- normalized_counts_1[,c(2,4,6,8,10,12,1,3,5,7,9,11)]
+not_normalized_counts_1 <- counts(dds_1, normalized = F)
+not_normalized_counts_1 <- not_normalized_counts_1[,c(2,4,6,8,10,12,1,3,5,7,9,11)]
+```
+
+```{r}
+# Loads a file with Gene_stable_ID, Gene_names, and Gene_description
+gene_description <- read.csv("./data/db/gene_names.txt",header = TRUE, sep = "\t", 
+                             quote = "")
+# Makes a tibble of the normalized counts
+normalized_counts_tb_1 <- normalized_counts_1 %>%
+  data.frame() %>%
+  rownames_to_column(var="Gene_stable_ID") %>% 
+  as_tibble()
+
+# Adds gene name and description to the normalized counts
+normalized_counts_nice_1 <- nicefy_gene_results(normalized_counts_tb_1, gene_description)
+```
+
+```{r}
+# Script to save a table of unnormalized counts.
+raw_counts_1 <- not_normalized_counts_1 %>% as.data.frame()
+
+raw_counts_tb_1 <- raw_counts_1 %>%
+  data.frame() %>%
+  rownames_to_column(var="Gene_stable_ID") %>% 
+  as_tibble()
+
+# Adds gene name and description to the raw counts
+raw_counts_nice_1 <- nicefy_gene_results(raw_counts_tb_1, gene_description)
+```
+
+```{r}
+# Runs DESeq2 on the dds object
+dds_1 <- DESeq(dds_1)
+```
+
+```{r, echo=F}
+# Performs lfc-shrinkage on the result tables using ashr
+res_table_log_1 <- lfcShrink(dds_1, 
+                               contrast = c("group", "tda1∆log", 
+                                            "Referencelog"), type ="ashr")
+res_table_PDS_1 <- lfcShrink(dds_1, 
+                               contrast = c("group", "tda1∆PDS", 
+                                            "ReferencePDS"), type ="ashr")
+
+res_table_Ref_1 <- lfcShrink(dds_1, 
+                          contrast = c("group", "ReferencePDS", 
+                                       "Referencelog"), type ="ashr")
+res_table_TDA_1 <- lfcShrink(dds_1, 
+                           contrast = c("group", "tda1∆PDS", 
+                                        "tda1∆log"), type ="ashr")
+
+# Prints the summary of the results tables
+summary(res_table_log_1, alpha = 0.05)
+summary(res_table_PDS_1, alpha = 0.05)
+summary(res_table_Ref_1, alpha = 0.05)
+summary(res_table_TDA_1, alpha = 0.05)
+```
+
+```{r}
+# Makes a tibble of only significant genes (padj < padj.cutoff)
+padj.cutoff <- 0.05
+
+res_table_log_tb_1 <- res_table_log_1 %>%
+  data.frame() %>%
+  rownames_to_column(var="Gene_stable_ID") %>% 
+  as_tibble()
+
+sig_log_1 <- res_table_log_tb_1 %>% 
+  filter(padj < padj.cutoff)
+
+# Makes a tibble of only significant genes, RefvsTDA1 during PDS
+res_table_PDS_tb_1 <- res_table_PDS_1 %>%
+  data.frame() %>%
+  rownames_to_column(var="Gene_stable_ID") %>% 
+  as_tibble()
+
+sig_PDS_1 <- res_table_PDS_tb_1 %>% 
+  filter(padj < padj.cutoff)
+
+# Makes a tibble of significant genes glucuse vs PDS in Ref
+res_table_Ref_tb_1 <- res_table_Ref_1 %>%
+  data.frame() %>%
+  rownames_to_column(var="Gene_stable_ID") %>% 
+  as_tibble()
+
+sig_Ref_1 <- res_table_Ref_tb_1 %>% 
+  filter(padj < padj.cutoff)
+
+# Makes a tibble of siginifcant genes log-phase vs PDS-phase for TDA1
+res_table_TDA_tb_1 <- res_table_TDA_1 %>%
+  data.frame() %>%
+  rownames_to_column(var="Gene_stable_ID") %>% 
+  as_tibble()
+
+sig_TDA_1 <- res_table_TDA_tb_1 %>% 
+  filter(padj < padj.cutoff)
+```
+
+```{r}
+sig_log_nice_1 <- nicefy_gene_results(sig_log_1, gene_description)
+sig_PDS_nice_1 <- nicefy_gene_results(sig_PDS_1, gene_description)
+sig_Ref_nice_1 <- nicefy_gene_results(sig_Ref_1, gene_description)
+sig_TDA_nice_1 <- nicefy_gene_results(sig_TDA_1, gene_description)
+
+res_table_log_nice_1 <- nicefy_gene_results(res_table_log_tb_1, gene_description)
+res_table_PDS_nice_1 <- nicefy_gene_results(res_table_PDS_tb_1, gene_description)
+res_table_Ref_nice_1 <- nicefy_gene_results(res_table_Ref_tb_1, gene_description)
+res_table_TDA_nice_1 <- nicefy_gene_results(res_table_TDA_tb_1, gene_description)
+```
+
+```{r}
+save_r_object(raw_counts_nice_1, "./r_objects/Exp1/")
+save_r_object(normalized_counts_1, "./r_objects/Exp1/")
+save_r_object(normalized_counts_nice_1, "./r_objects/Exp1/")
+
+save_r_object(res_table_log_nice_1, "./r_objects/Exp1/")
+save_r_object(res_table_PDS_nice_1, "./r_objects/Exp1/")
+save_r_object(res_table_Ref_nice_1, "./r_objects/Exp1/")
+save_r_object(res_table_TDA_nice_1, "./r_objects/Exp1/")
+
+save_r_object(sig_log_nice_1, "./r_objects/Exp1/")
+save_r_object(sig_PDS_nice_1, "./r_objects/Exp1/")
+save_r_object(sig_Ref_nice_1, "./r_objects/Exp1/")
+save_r_object(sig_TDA_nice_1, "./r_objects/Exp1/")
+```

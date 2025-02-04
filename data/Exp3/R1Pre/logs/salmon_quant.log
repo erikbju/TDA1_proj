@@ -1,0 +1,140 @@
+[2024-10-02 01:56:04.694] [jointLog] [info] setting maxHashResizeThreads to 6
+[2024-10-02 01:56:04.694] [jointLog] [info] Fragment incompatibility prior below threshold.  Incompatible fragments will be ignored.
+[2024-10-02 01:56:04.695] [jointLog] [info] numQuantThreads = 3
+[2024-10-02 01:56:05.805] [jointLog] [info] replaced 0 non-ACGT nucleotides with random nucleotides
+[2024-10-02 01:56:06.000] [fileLog] [info] quantification processed 0 fragments so far
+
+[2024-10-02 01:56:08.173] [fileLog] [info] quantification processed 1000000 fragments so far
+
+[2024-10-02 01:56:10.601] [fileLog] [info] quantification processed 2000000 fragments so far
+
+[2024-10-02 01:56:11.294] [jointLog] [info] 
+
+The alignment group queue pool has been exhausted.  524627 extra fragments were allocated on the heap to saturate the pool.  No new fragments will be allocated
+
+
+[2024-10-02 01:56:20.756] [fileLog] [info] quantification processed 3000000 fragments so far
+
+[2024-10-02 01:56:41.309] [fileLog] [info] quantification processed 4000000 fragments so far
+
+[2024-10-02 01:57:01.679] [fileLog] [info] quantification processed 5000000 fragments so far
+
+[2024-10-02 01:57:16.330] [fileLog] [info] quantification processed 6000000 fragments so far
+
+[2024-10-02 01:57:30.975] [fileLog] [info] quantification processed 7000000 fragments so far
+
+[2024-10-02 01:57:33.313] [fileLog] [info] quantification processed 8000000 fragments so far
+
+[2024-10-02 01:57:35.541] [fileLog] [info] quantification processed 9000000 fragments so far
+
+[2024-10-02 01:57:37.753] [fileLog] [info] quantification processed 10000000 fragments so far
+
+[2024-10-02 01:57:39.984] [fileLog] [info] quantification processed 11000000 fragments so far
+
+[2024-10-02 01:57:42.159] [fileLog] [info] quantification processed 12000000 fragments so far
+
+[2024-10-02 01:57:44.290] [fileLog] [info] quantification processed 13000000 fragments so far
+
+[2024-10-02 01:57:46.457] [fileLog] [info] quantification processed 14000000 fragments so far
+
+[2024-10-02 01:57:48.607] [fileLog] [info] quantification processed 15000000 fragments so far
+
+[2024-10-02 01:57:50.730] [fileLog] [info] quantification processed 16000000 fragments so far
+
+[2024-10-02 01:57:52.879] [fileLog] [info] quantification processed 17000000 fragments so far
+
+[2024-10-02 01:57:55.101] [fileLog] [info] quantification processed 18000000 fragments so far
+
+[2024-10-02 01:57:57.348] [fileLog] [info] quantification processed 19000000 fragments so far
+
+[2024-10-02 01:57:59.538] [fileLog] [info] quantification processed 20000000 fragments so far
+
+[2024-10-02 01:58:01.773] [fileLog] [info] quantification processed 21000000 fragments so far
+
+[2024-10-02 01:58:03.986] [fileLog] [info] quantification processed 22000000 fragments so far
+
+[2024-10-02 01:58:06.052] [fileLog] [info] quantification processed 23000000 fragments so far
+
+[2024-10-02 01:58:08.414] [fileLog] [info] quantification processed 24000000 fragments so far
+
+[2024-10-02 01:58:11.358] [fileLog] [info] quantification processed 25000000 fragments so far
+
+[2024-10-02 01:58:13.908] [fileLog] [info] quantification processed 26000000 fragments so far
+
+[2024-10-02 01:58:16.111] [fileLog] [info] quantification processed 27000000 fragments so far
+
+[2024-10-02 01:58:18.225] [fileLog] [info] quantification processed 28000000 fragments so far
+
+[2024-10-02 01:58:20.332] [fileLog] [info] quantification processed 29000000 fragments so far
+
+[2024-10-02 01:58:22.507] [fileLog] [info] quantification processed 30000000 fragments so far
+
+[2024-10-02 01:58:24.738] [fileLog] [info] quantification processed 31000000 fragments so far
+
+[2024-10-02 01:58:26.983] [fileLog] [info] quantification processed 32000000 fragments so far
+
+[2024-10-02 01:58:29.202] [fileLog] [info] quantification processed 33000000 fragments so far
+
+[2024-10-02 01:58:31.373] [fileLog] [info] quantification processed 34000000 fragments so far
+
+[2024-10-02 01:58:33.573] [fileLog] [info] quantification processed 35000000 fragments so far
+
+[2024-10-02 01:58:35.781] [fileLog] [info] quantification processed 36000000 fragments so far
+
+[2024-10-02 01:58:37.985] [fileLog] [info] quantification processed 37000000 fragments so far
+
+[2024-10-02 01:58:40.280] [fileLog] [info] quantification processed 38000000 fragments so far
+
+[2024-10-02 01:58:42.497] [fileLog] [info] quantification processed 39000000 fragments so far
+
+[2024-10-02 01:58:44.735] [fileLog] [info] quantification processed 40000000 fragments so far
+
+[2024-10-02 01:58:46.930] [fileLog] [info] quantification processed 41000000 fragments so far
+
+[2024-10-02 01:58:49.152] [fileLog] [info] quantification processed 42000000 fragments so far
+
+[2024-10-02 01:58:51.318] [fileLog] [info] quantification processed 43000000 fragments so far
+
+[2024-10-02 01:58:53.660] [fileLog] [info] quantification processed 44000000 fragments so far
+
+[2024-10-02 01:58:55.912] [fileLog] [info] quantification processed 45000000 fragments so far
+
+[2024-10-02 01:58:58.166] [fileLog] [info] quantification processed 46000000 fragments so far
+
+[2024-10-02 01:59:00.413] [fileLog] [info] quantification processed 47000000 fragments so far
+
+[2024-10-02 01:59:03.035] [fileLog] [info] quantification processed 48000000 fragments so far
+
+[2024-10-02 01:59:05.394] [fileLog] [info] quantification processed 49000000 fragments so far
+
+[2024-10-02 01:59:07.539] [fileLog] [info] quantification processed 50000000 fragments so far
+
+[2024-10-02 01:59:08.043] [fileLog] [info] quantification processed 50243413 fragments so far
+
+[2024-10-02 01:59:11.313] [jointLog] [info] Thread saw mini-batch with a maximum of 8.90% zero probability fragments
+[2024-10-02 01:59:11.316] [jointLog] [info] Thread saw mini-batch with a maximum of 9.20% zero probability fragments
+[2024-10-02 01:59:11.316] [jointLog] [info] Thread saw mini-batch with a maximum of 9.10% zero probability fragments
+[2024-10-02 01:59:11.317] [jointLog] [info] 
+
+
+Completed first pass through the alignment file.
+Total # of mapped reads : 50243413
+# of uniquely mapped reads : 46028827
+# ambiguously mapped reads : 4214586
+
+
+
+[2024-10-02 01:59:11.378] [jointLog] [info] Computed 35071 rich equivalence classes for further processing
+[2024-10-02 01:59:11.378] [jointLog] [info] Counted 50126918 total reads in the equivalence classes 
+[2024-10-02 01:59:11.381] [jointLog] [info] starting optimizer
+[2024-10-02 01:59:11.393] [jointLog] [info] Marked 0 weighted equivalence classes as degenerate
+[2024-10-02 01:59:11.397] [jointLog] [info] iteration = 0 | max rel diff. = 379.307
+[2024-10-02 01:59:11.687] [jointLog] [info] iteration = 100 | max rel diff. = 0.0225214
+[2024-10-02 01:59:11.889] [jointLog] [info] iteration = 176 | max rel diff. = 0.00858629
+[2024-10-02 01:59:11.889] [jointLog] [info] finished optimizer
+[2024-10-02 01:59:11.889] [jointLog] [info] writing output
+[2024-10-02 01:59:13.005] [jointLog] [info] Computing gene-level abundance estimates
+[2024-10-02 01:59:14.061] [jointLog] [info] There were 7126 transcripts mapping to 7126 genes
+[2024-10-02 01:59:14.061] [jointLog] [info] NOTE: We recommend using tximport (https://bioconductor.org/packages/release/bioc/html/tximport.html) for aggregating transcript-level salmon abundance estimates to the gene level.  It is more versatile, exposes more features, and allows considering multi-sample information during aggregation.
+[2024-10-02 01:59:14.072] [jointLog] [info] Aggregating expressions to gene level
+[2024-10-02 01:59:14.095] [jointLog] [info] done

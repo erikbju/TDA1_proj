@@ -1,0 +1,10 @@
+{
+    "salmon_version": "1.9.0",
+    "geneMap": "genes.gtf",
+    "threads": "6",
+    "libType": "IU",
+    "targets": "genome.transcripts.fa",
+    "alignments": "21_R6Post.Aligned.toTranscriptome.out.bam",
+    "output": "21_R6Post",
+    "auxDir": "aux_info"
+}

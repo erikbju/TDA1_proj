@@ -1,0 +1,110 @@
+[2023-02-24 02:38:18.627] [jointLog] [info] setting maxHashResizeThreads to 6
+[2023-02-24 02:38:18.627] [jointLog] [info] Fragment incompatibility prior below threshold.  Incompatible fragments will be ignored.
+[2023-02-24 02:38:18.628] [jointLog] [info] numQuantThreads = 3
+[2023-02-24 02:38:20.662] [jointLog] [info] replaced 0 non-ACGT nucleotides with random nucleotides
+[2023-02-24 02:38:20.865] [fileLog] [info] quantification processed 0 fragments so far
+
+[2023-02-24 02:38:23.119] [fileLog] [info] quantification processed 1000000 fragments so far
+
+[2023-02-24 02:38:25.243] [fileLog] [info] quantification processed 2000000 fragments so far
+
+[2023-02-24 02:38:25.718] [jointLog] [info] 
+
+The alignment group queue pool has been exhausted.  254400 extra fragments were allocated on the heap to saturate the pool.  No new fragments will be allocated
+
+
+[2023-02-24 02:38:38.755] [fileLog] [info] quantification processed 3000000 fragments so far
+
+[2023-02-24 02:38:52.414] [fileLog] [info] quantification processed 4000000 fragments so far
+
+[2023-02-24 02:39:07.433] [fileLog] [info] quantification processed 5000000 fragments so far
+
+[2023-02-24 02:39:22.911] [fileLog] [info] quantification processed 6000000 fragments so far
+
+[2023-02-24 02:39:36.155] [fileLog] [info] quantification processed 7000000 fragments so far
+
+[2023-02-24 02:39:38.382] [fileLog] [info] quantification processed 8000000 fragments so far
+
+[2023-02-24 02:39:40.413] [fileLog] [info] quantification processed 9000000 fragments so far
+
+[2023-02-24 02:39:42.222] [fileLog] [info] quantification processed 10000000 fragments so far
+
+[2023-02-24 02:39:44.115] [fileLog] [info] quantification processed 11000000 fragments so far
+
+[2023-02-24 02:39:46.310] [fileLog] [info] quantification processed 12000000 fragments so far
+
+[2023-02-24 02:39:48.457] [fileLog] [info] quantification processed 13000000 fragments so far
+
+[2023-02-24 02:39:50.748] [fileLog] [info] quantification processed 14000000 fragments so far
+
+[2023-02-24 02:39:52.634] [fileLog] [info] quantification processed 15000000 fragments so far
+
+[2023-02-24 02:39:54.357] [fileLog] [info] quantification processed 16000000 fragments so far
+
+[2023-02-24 02:39:56.277] [fileLog] [info] quantification processed 17000000 fragments so far
+
+[2023-02-24 02:39:58.249] [fileLog] [info] quantification processed 18000000 fragments so far
+
+[2023-02-24 02:40:00.260] [fileLog] [info] quantification processed 19000000 fragments so far
+
+[2023-02-24 02:40:02.281] [fileLog] [info] quantification processed 20000000 fragments so far
+
+[2023-02-24 02:40:04.318] [fileLog] [info] quantification processed 21000000 fragments so far
+
+[2023-02-24 02:40:06.502] [fileLog] [info] quantification processed 22000000 fragments so far
+
+[2023-02-24 02:40:08.612] [fileLog] [info] quantification processed 23000000 fragments so far
+
+[2023-02-24 02:40:10.865] [fileLog] [info] quantification processed 24000000 fragments so far
+
+[2023-02-24 02:40:12.959] [fileLog] [info] quantification processed 25000000 fragments so far
+
+[2023-02-24 02:40:14.940] [fileLog] [info] quantification processed 26000000 fragments so far
+
+[2023-02-24 02:40:17.145] [fileLog] [info] quantification processed 27000000 fragments so far
+
+[2023-02-24 02:40:19.509] [fileLog] [info] quantification processed 28000000 fragments so far
+
+[2023-02-24 02:40:21.397] [fileLog] [info] quantification processed 29000000 fragments so far
+
+[2023-02-24 02:40:23.444] [fileLog] [info] quantification processed 30000000 fragments so far
+
+[2023-02-24 02:40:25.298] [fileLog] [info] quantification processed 31000000 fragments so far
+
+[2023-02-24 02:40:27.142] [fileLog] [info] quantification processed 32000000 fragments so far
+
+[2023-02-24 02:40:29.216] [fileLog] [info] quantification processed 33000000 fragments so far
+
+[2023-02-24 02:40:31.356] [fileLog] [info] quantification processed 34000000 fragments so far
+
+[2023-02-24 02:40:33.479] [fileLog] [info] quantification processed 35000000 fragments so far
+
+[2023-02-24 02:40:34.749] [fileLog] [info] quantification processed 35572156 fragments so far
+
+[2023-02-24 02:40:38.526] [jointLog] [info] Thread saw mini-batch with a maximum of 4.49% zero probability fragments
+[2023-02-24 02:40:38.529] [jointLog] [info] Thread saw mini-batch with a maximum of 4.00% zero probability fragments
+[2023-02-24 02:40:38.530] [jointLog] [info] Thread saw mini-batch with a maximum of 4.50% zero probability fragments
+[2023-02-24 02:40:38.531] [jointLog] [info] 
+
+
+Completed first pass through the alignment file.
+Total # of mapped reads : 35572156
+# of uniquely mapped reads : 33209334
+# ambiguously mapped reads : 2362822
+
+
+
+[2023-02-24 02:40:38.573] [jointLog] [info] Computed 16159 rich equivalence classes for further processing
+[2023-02-24 02:40:38.573] [jointLog] [info] Counted 34790510 total reads in the equivalence classes 
+[2023-02-24 02:40:38.575] [jointLog] [info] starting optimizer
+[2023-02-24 02:40:38.593] [jointLog] [info] Marked 0 weighted equivalence classes as degenerate
+[2023-02-24 02:40:38.594] [jointLog] [info] iteration = 0 | max rel diff. = 12631.6
+[2023-02-24 02:40:38.682] [jointLog] [info] iteration = 100 | max rel diff. = 11.4794
+[2023-02-24 02:40:38.710] [jointLog] [info] iteration = 137 | max rel diff. = 0.00948477
+[2023-02-24 02:40:38.710] [jointLog] [info] finished optimizer
+[2023-02-24 02:40:38.710] [jointLog] [info] writing output
+[2023-02-24 02:40:39.881] [jointLog] [info] Computing gene-level abundance estimates
+[2023-02-24 02:40:40.899] [jointLog] [info] There were 7126 transcripts mapping to 7126 genes
+[2023-02-24 02:40:40.899] [jointLog] [info] NOTE: We recommend using tximport (https://bioconductor.org/packages/release/bioc/html/tximport.html) for aggregating transcript-level salmon abundance estimates to the gene level.  It is more versatile, exposes more features, and allows considering multi-sample information during aggregation.
+[2023-02-24 02:40:40.908] [jointLog] [info] Aggregating expressions to gene level
+[2023-02-24 02:40:40.926] [jointLog] [info] done

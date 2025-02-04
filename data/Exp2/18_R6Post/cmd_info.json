@@ -1,0 +1,10 @@
+{
+    "salmon_version": "1.9.0",
+    "geneMap": "genes.gtf",
+    "threads": "6",
+    "libType": "IU",
+    "targets": "genome.transcripts.fa",
+    "alignments": "18Pre_T1.Aligned.toTranscriptome.out.bam",
+    "output": "18Pre_T1",
+    "auxDir": "aux_info"
+}

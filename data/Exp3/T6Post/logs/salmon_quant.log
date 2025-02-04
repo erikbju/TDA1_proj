@@ -1,0 +1,67 @@
+[2024-10-04 14:36:53.605] [jointLog] [info] setting maxHashResizeThreads to 6
+[2024-10-04 14:36:53.605] [jointLog] [info] Fragment incompatibility prior below threshold.  Incompatible fragments will be ignored.
+[2024-10-04 14:36:53.606] [jointLog] [info] numQuantThreads = 3
+[2024-10-04 14:36:55.728] [jointLog] [info] replaced 0 non-ACGT nucleotides with random nucleotides
+[2024-10-04 14:36:55.923] [fileLog] [info] quantification processed 0 fragments so far
+
+[2024-10-04 14:36:57.914] [fileLog] [info] quantification processed 1000000 fragments so far
+
+[2024-10-04 14:36:59.974] [fileLog] [info] quantification processed 2000000 fragments so far
+
+[2024-10-04 14:37:00.693] [jointLog] [info] 
+
+The alignment group queue pool has been exhausted.  706462 extra fragments were allocated on the heap to saturate the pool.  No new fragments will be allocated
+
+
+[2024-10-04 14:37:09.098] [fileLog] [info] quantification processed 3000000 fragments so far
+
+[2024-10-04 14:37:22.025] [fileLog] [info] quantification processed 4000000 fragments so far
+
+[2024-10-04 14:37:34.939] [fileLog] [info] quantification processed 5000000 fragments so far
+
+[2024-10-04 14:37:47.819] [fileLog] [info] quantification processed 6000000 fragments so far
+
+[2024-10-04 14:38:00.682] [fileLog] [info] quantification processed 7000000 fragments so far
+
+[2024-10-04 14:38:02.865] [fileLog] [info] quantification processed 8000000 fragments so far
+
+[2024-10-04 14:38:04.978] [fileLog] [info] quantification processed 9000000 fragments so far
+
+[2024-10-04 14:38:07.069] [fileLog] [info] quantification processed 10000000 fragments so far
+
+[2024-10-04 14:38:09.171] [fileLog] [info] quantification processed 11000000 fragments so far
+
+[2024-10-04 14:38:11.251] [fileLog] [info] quantification processed 12000000 fragments so far
+
+[2024-10-04 14:38:13.338] [fileLog] [info] quantification processed 13000000 fragments so far
+
+[2024-10-04 14:38:15.378] [fileLog] [info] quantification processed 13969998 fragments so far
+
+[2024-10-04 14:38:19.257] [jointLog] [info] Thread saw mini-batch with a maximum of 6.30% zero probability fragments
+[2024-10-04 14:38:19.258] [jointLog] [info] Thread saw mini-batch with a maximum of 5.10% zero probability fragments
+[2024-10-04 14:38:19.259] [jointLog] [info] Thread saw mini-batch with a maximum of 5.90% zero probability fragments
+[2024-10-04 14:38:19.259] [jointLog] [info] 
+
+
+Completed first pass through the alignment file.
+Total # of mapped reads : 13969998
+# of uniquely mapped reads : 12221199
+# ambiguously mapped reads : 1748799
+
+
+
+[2024-10-04 14:38:19.313] [jointLog] [info] Computed 18009 rich equivalence classes for further processing
+[2024-10-04 14:38:19.313] [jointLog] [info] Counted 13911826 total reads in the equivalence classes 
+[2024-10-04 14:38:19.316] [jointLog] [info] starting optimizer
+[2024-10-04 14:38:19.323] [jointLog] [info] Marked 0 weighted equivalence classes as degenerate
+[2024-10-04 14:38:19.324] [jointLog] [info] iteration = 0 | max rel diff. = 16911.3
+[2024-10-04 14:38:19.414] [jointLog] [info] iteration = 100 | max rel diff. = 0.0592007
+[2024-10-04 14:38:19.484] [jointLog] [info] iteration = 200 | max rel diff. = 6.03544
+[2024-10-04 14:38:19.492] [jointLog] [info] iteration = 213 | max rel diff. = 0.00995031
+[2024-10-04 14:38:19.492] [jointLog] [info] finished optimizer
+[2024-10-04 14:38:19.492] [jointLog] [info] writing output
+[2024-10-04 14:38:20.216] [jointLog] [info] Computing gene-level abundance estimates
+[2024-10-04 14:38:21.182] [jointLog] [info] There were 7126 transcripts mapping to 7126 genes
+[2024-10-04 14:38:21.182] [jointLog] [info] NOTE: We recommend using tximport (https://bioconductor.org/packages/release/bioc/html/tximport.html) for aggregating transcript-level salmon abundance estimates to the gene level.  It is more versatile, exposes more features, and allows considering multi-sample information during aggregation.
+[2024-10-04 14:38:21.190] [jointLog] [info] Aggregating expressions to gene level
+[2024-10-04 14:38:21.207] [jointLog] [info] done

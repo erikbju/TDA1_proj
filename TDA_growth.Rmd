@@ -1,0 +1,113 @@
+---
+title: "TDA_growth.Rmd"
+author: "Erik Bjurström"
+date: "2024-12-19"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+library(ggplot2)
+library(ggtext)
+library(reshape2)
+library(zoo)
+library(cowplot)
+```
+
+```{r}
+source("./scripts/supp.R")
+```
+
+```{r Growth curves, echo = F}
+# Script for restructuring OD and substrate curves over time for plotting.
+growth.OD <- read.table("./data/Growth/Flask_OD.csv", head = T, sep = ",", quote = "") %>% as.data.frame() 
+growth.Gluc <- read.table("./data/Growth/Flask_glucose.csv", head = T, sep = ",", quote = "") %>% as.data.frame()
+growth.Etoh <- read.table("./data/Growth/Flask_ethanol.csv", head = T, sep = ",", quote = "") %>% as.data.frame()
+
+# Restructures the data set from samples in column to rows where each value
+# is paired with its meta data like strain and replicate number
+growth.OD <-  melt(growth.OD, id = 1) %>% 
+  separate(col = variable, into = c('Strain', 'Replicate'), sep = '\\.')
+
+growth.OD$Strain[growth.OD$Strain == "TDA"] =  "*tda1∆*"
+
+growth.Gluc <-  melt(growth.Gluc, id = 1) %>% 
+  separate(col = variable, into = c('Strain', 'Replicate'), sep = '\\.')
+
+growth.Gluc$Strain[growth.Gluc$Strain == "TDA"] =  "*tda1∆*"
+
+growth.Etoh <-  melt(growth.Etoh, id = 1) %>% 
+  separate(col = variable, into = c('Strain', 'Replicate'), sep = '\\.')
+
+growth.Etoh$Strain[growth.Etoh$Strain == "TDA"] =  "*tda1∆*"
+
+```
+
+```{r Growth curves, echo = F}
+
+rollOD <- growth.OD %>% group_by(Strain, Time) %>% summarise(medOD = median(value), mad = mad(value)) %>% mutate(mm3 = rollapply(medOD, 4, median, fill = NA, align="center"), type = "OD")
+
+rollgluc <- growth.Gluc %>% group_by(Strain, Time) %>% summarise(medOD = median(value), mad = mad(value)) %>% mutate(mm3 = rollapply(medOD, 4, median, fill = NA, align="center"), type = "gluc")
+  
+rolletoh <- growth.Etoh %>% group_by(Strain, Time) %>% summarise(medOD = median(value), mad = mad(value)) %>% mutate(mm3 = rollapply(medOD, 4, median, fill = NA, align="center"), type = "etoh")
+
+growth.Ref <- rbind(rollOD[rollOD$Strain == "Ref",], rollgluc[rollgluc$Strain == "Ref",], rolletoh[rolletoh$Strain == "Ref",]) 
+growth.Ref <- split(growth.Ref, growth.Ref$type)
+
+growth.TDA <- rbind(rollOD[rollOD$Strain != "Ref",], rollgluc[rollgluc$Strain != "Ref",], rolletoh[rolletoh$Strain != "Ref",]) 
+growth.TDA <- split(growth.TDA, growth.TDA$type)
+
+```
+
+```{r, echo=F}
+coeff <- 4
+
+legend_colors <- c("(Ref) OD600" = "darkolivegreen", "(Ref) Glucose" = "salmon4", "(Ref) Ethanol" = "cyan4",
+                   "(tda1∆) OD600" = "darkolivegreen3", "(tda1∆) Glucose" = "salmon", "(tda1∆) Ethanol" = "cyan1")
+
+MessyCurve <- ggplot() +
+    geom_line(data = growth.Ref[[3]], aes(x = Time, y = mm3, color = "(Ref) OD600"), size = 0.7) +
+    geom_point(data = growth.Ref[[3]], aes(x = Time, y = mm3, color = "(Ref) OD600"), size = 4, shape = 16) +
+    geom_line(data = growth.Ref[[2]], aes(x = Time, y = mm3/coeff, color = "(Ref) Glucose"),  size = 0.7) +
+    geom_point(data = growth.Ref[[2]], aes(x = Time, y = mm3/coeff, color = "(Ref) Glucose"), size = 4, shape = 17) +
+    geom_line(data = growth.Ref[[1]], aes(x = Time, y = mm3/coeff, color = "(Ref) Ethanol"), size = 0.7) +
+    geom_point(data = growth.Ref[[1]], aes(x = Time, y = mm3/coeff, color = "(Ref) Ethanol"), size = 4, shape = 15) +
+  
+    geom_line(data = growth.TDA[[3]], aes(x = Time, y = mm3, color = "(tda1∆) OD600"), linetype = "dashed", size = 0.7) +
+    geom_point(data = growth.TDA[[3]], aes(x = Time, y = mm3, color = "(tda1∆) OD600"), size = 4, shape = 16) +
+    geom_line(data = growth.TDA[[2]], aes(x = Time, y = mm3/coeff, color = "(tda1∆) Glucose"), linetype = "dashed", size = 0.7) +
+    geom_point(data = growth.TDA[[2]], aes(x = Time, y = mm3/coeff, color = "(tda1∆) Glucose"), size = 4, shape = 17) +
+    geom_line(data = growth.TDA[[1]], aes(x = Time, y = mm3/coeff, color = "(tda1∆) Ethanol"), linetype = "dashed", size = 0.7) +
+    geom_point(data = growth.TDA[[1]], aes(x = Time, y = mm3/coeff, color = "(tda1∆) Ethanol"), size = 4, shape = 15) +
+    
+    geom_vline(xintercept = c(9,26), linetype = "dotted", colour = "black", size = 1) +
+    
+    scale_x_continuous(name = "Time (h)", breaks = seq(0,100,10), expand = c(0,0), limits = c(0,100)) +
+    scale_y_continuous(name = "OD600", sec.axis = sec_axis(~.*coeff, name = "Glucose and Ethanol conc. (g/L)")) + 
+    labs(color = "the legend") +
+    scale_color_manual(values = legend_colors) +
+    theme(
+      panel.grid.major = element_blank(),
+      panel.grid.minor = element_blank(),
+      # panel.border = element_blank(),
+      panel.background = element_blank(),
+      axis.line = element_line(colour = "black"),
+      legend.title = element_blank(),
+      legend.text  = element_markdown(size = 14),
+      legend.key = element_rect(fill = "white"),
+      legend.position = c(0.8,0.5),
+      axis.title.x = element_text(size = 15),
+      axis.text.x = element_text(size = 12),
+      axis.title.y = element_text(size = 15),
+      axis.text.y = element_text(size = 12)
+    )
+```
+
+```{r}
+export2svg(MessyCurve, c(10,6), filename = "./plots/Unedited/rawFig1.svg")
+```
+

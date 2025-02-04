@@ -1,0 +1,564 @@
+---
+title: "Union_TDA"
+author: "Erik Bjurström"
+date: "2024-10-19"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r libraries}
+library(knitr,warn.conflicts = F)
+library(tidyverse,warn.conflicts = F)
+library(Biobase)
+library(ComplexHeatmap)
+library(cowplot)
+library(piano,warn.conflicts = F)
+library(circlize)
+library(viridis)
+library(exact2x2)
+```
+
+```{r Function scripts, echo = F}
+# Imports all the R functions in this Rmd from subdir "R_scripts"
+file.sources = list.files("./scripts",pattern = "*.R",full.names = T)
+sapply(file.sources, source, .GlobalEnv)
+```
+
+```{r Exp1}
+
+res_table_log_nice_1 <- readRDS("./r_objects/Exp1/res_table_log_nice_1.rds")
+res_table_PDS_nice_1 <- readRDS("./r_objects/Exp1/res_table_PDS_nice_1.rds")
+res_table_Ref_nice_1 <- readRDS("./r_objects/Exp1/res_table_Ref_nice_1.rds")
+res_table_TDA_nice_1 <- readRDS("./r_objects/Exp1/res_table_TDA_nice_1.rds")
+sig_log_nice_1 <- readRDS("./r_objects/Exp1/sig_log_nice_1.rds")
+sig_PDS_nice_1 <- readRDS("./r_objects/Exp1/sig_PDS_nice_1.rds")
+sig_Ref_nice_1 <- readRDS("./r_objects/Exp1/sig_Ref_nice_1.rds")
+sig_TDA_nice_1 <- readRDS("./r_objects/Exp1/sig_TDA_nice_1.rds")
+
+raw_counts_nice_1 <- readRDS("./r_objects/Exp1/raw_counts_nice_1.rds")
+normalized_counts_1 <- readRDS("./r_objects/Exp1/normalized_counts_1.rds")
+normalized_counts_nice_1 <- readRDS("./r_objects/Exp1/normalized_counts_nice_1.rds")
+
+res_table_log_nice_2 <- readRDS("./r_objects/Exp2/res_table_log_nice_2.rds")
+res_table_PDS_nice_2 <- readRDS("./r_objects/Exp2/res_table_PDS_nice_2.rds")
+res_table_Ref_nice_2 <- readRDS("./r_objects/Exp2/res_table_Ref_nice_2.rds")
+res_table_TDA_nice_2 <- readRDS("./r_objects/Exp2/res_table_TDA_nice_2.rds")
+sig_log_nice_2 <- readRDS("./r_objects/Exp2/sig_log_nice_2.rds")
+sig_PDS_nice_2 <- readRDS("./r_objects/Exp2/sig_PDS_nice_2.rds")
+sig_Ref_nice_2 <- readRDS("./r_objects/Exp2/sig_Ref_nice_2.rds")
+sig_TDA_nice_2 <- readRDS("./r_objects/Exp2/sig_TDA_nice_2.rds")
+
+raw_counts_nice_2 <- readRDS("./r_objects/Exp2/raw_counts_nice_2.rds")
+normalized_counts_2 <- readRDS("./r_objects/Exp2/normalized_counts_2.rds")
+normalized_counts_nice_2 <- readRDS("./r_objects/Exp2/normalized_counts_nice_2.rds")
+
+res_table_log_nice_3 <- readRDS("./r_objects/Exp3/res_table_log_nice_3.rds")
+res_table_PDS_nice_3 <- readRDS("./r_objects/Exp3/res_table_PDS_nice_3.rds")
+res_table_Ref_nice_3 <- readRDS("./r_objects/Exp3/res_table_Ref_nice_3.rds")
+res_table_TDA_nice_3 <- readRDS("./r_objects/Exp3/res_table_TDA_nice_3.rds")
+sig_log_nice_3 <- readRDS("./r_objects/Exp3/sig_log_nice_3.rds")
+sig_PDS_nice_3 <- readRDS("./r_objects/Exp3/sig_PDS_nice_3.rds")
+sig_Ref_nice_3 <- readRDS("./r_objects/Exp3/sig_Ref_nice_3.rds")
+sig_TDA_nice_3 <- readRDS("./r_objects/Exp3/sig_TDA_nice_3.rds")
+
+raw_counts_nice_3 <- readRDS("./r_objects/Exp3/raw_counts_nice_3.rds")
+normalized_counts_3 <- readRDS("./r_objects/Exp3/normalized_counts_3.rds")
+normalized_counts_nice_3 <- readRDS("./r_objects/Exp3/normalized_counts_nice_3.rds")
+```
+
+```{r}
+tx2gene <- read.delim("./data/db/salmon_tx2gene.tsv", sep = "\t", quote = "")
+```
+
+```{r}
+intersect_log <- intersectionalize(sig_log_nice_1, sig_log_nice_2, sig_log_nice_3)
+intersect_PDS <- intersectionalize(sig_PDS_nice_1, sig_PDS_nice_2, sig_PDS_nice_3)
+```
+
+For Figure 2: start
+```{r}
+list1 <- list(
+    l = sig_log_nice_1$Gene_stable_ID,
+    p = sig_PDS_nice_1$Gene_stable_ID,
+    r = sig_Ref_nice_1$Gene_stable_ID,
+    t = sig_TDA_nice_1$Gene_stable_ID)
+
+list2 <- list(
+    l = sig_log_nice_2$Gene_stable_ID,
+    p = sig_PDS_nice_2$Gene_stable_ID,
+    r = sig_Ref_nice_2$Gene_stable_ID,
+    t = sig_TDA_nice_2$Gene_stable_ID)
+
+list3 <- list(
+    l = sig_log_nice_3$Gene_stable_ID,
+    p = sig_PDS_nice_3$Gene_stable_ID,
+    r = sig_Ref_nice_3$Gene_stable_ID,
+    t = sig_TDA_nice_3$Gene_stable_ID)
+
+mlist1 <- mycomb(list1)
+mlist2 <- mycomb(list2)
+mlist3 <- mycomb(list3)
+
+freq1 <- data.frame(set = colnames(mlist1), freq = colSums(mlist1), group = 1)
+freq2 <- data.frame(set = colnames(mlist2), freq = colSums(mlist2), group = 2)
+freq3 <- data.frame(set = colnames(mlist3), freq = colSums(mlist3), group = 3)
+
+freqs <- rbind(freq1, freq2, freq3)
+freqs$group <- as.factor(freqs$group)
+
+```
+
+```{r}
+c1 <- c("log", "PDS", "Ref","TDA")
+c2 <- combn(unique(c1),2) %>% apply(2, paste0, collapse ="_")
+c3 <- combn(unique(c1),3) %>% apply(2, paste0, collapse ="_")
+c4 <- "log_PDS_Ref_TDA"
+combination_list <- c(c1,c2,c3,c4)
+
+a1 <- c("l", "p", "r", "t")
+a2 <- combn(unique(a1),2) %>% apply(2, paste0, collapse = "")
+a3 <- combn(unique(a1),3) %>% apply(2, paste0, collapse = "")
+a4 <- "lprt"
+abbreviated_combination_list <- c("0",sub("^", "o", a1),a2,a3,a4, "1")
+
+s <- c()
+for (i in c1) {
+  s <- c(s,if_else(grepl(i, combination_list), 1, 0))
+}
+setup <- matrix(s, ncol = 4) %>% t()
+```
+
+```{r}
+mc <- c("gray", "#E3D455",  "#227EB7", "#8ECA4F","#E20E6F")
+
+Ml <- expand.grid(y=seq(nrow(setup)), x=seq(ncol(setup)))
+Ml <- data.frame(Ml, value = as.vector(setup))
+  for(i in 1:nrow(Ml)){
+    if(Ml$value[i] > as.integer(0)){
+      Ml$color[i] <- T
+      Ml$fill[i] <- Ml$y[i]
+      Ml$alpha[i] <- T
+      Ml$Intersection[i] <- paste(Ml$x[i], "yes", sep ="")
+    }
+    else{
+      Ml$color[i] <- F
+      Ml$fill[i] <- F
+      Ml$alpha[i] <- F
+      Ml$Intersection[i] <- paste(i, "No", sep = "")
+    }
+  }
+Ml$fill <- as.factor(Ml$fill)
+Ml$alpha <- as.factor(Ml$alpha)
+```
+
+```{r}
+shade <- data.frame(y = c(1000,3000), xmin = 0, xmax = 16) %>% mutate(ymin = y -500, ymax = y + 500)
+```
+
+```{r}
+backup <- Ml
+Ml$y <- 1000 * Ml$y
+```
+
+```{r}
+UpSet_matrix <- ggplot() +
+    scale_x_continuous(expand = c(0,0)) + 
+    geom_rect(data = shade, aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax), fill = "grey", alpha = 0.2) + 
+    geom_line(data = Ml, aes(group = Intersection, x = x, y =y), color = "black") + 
+    geom_point(data = Ml, size = 5, shape = 21, aes(x = x, y = y, fill = fill, alpha = alpha, color = color))  + 
+    scale_fill_manual(values = mc, labels = c("NA","Strains, log-phase", "Strains, PDS-phase", "Phases, Reference", "Phases, tda∆1")) + 
+    labs(fill = "Contrast") +
+    scale_color_manual(values = c("grey", "black")) + 
+    scale_alpha_manual(values = c(0.5,1)) +
+    scale_y_reverse(limits = c(4500,500), expand = c(0,0)) +  xlab("  ") + ylab("   ") +
+    guides(color = "none", alpha = "none") +
+    theme(
+      panel.background = element_rect(fill = "white", color = "black"),
+      plot.margin=unit(c(-0.2,0.5,0.5,0.5), "lines"),
+      legend.position = "right",
+      axis.title.x = element_text(color = "white", size = 20),
+      axis.text.x = element_text(color = "white", size = 15),
+      axis.ticks.x = element_blank(),
+      axis.ticks.y = element_blank(),
+      # axis.text.y = element_blank(),
+      axis.text.y = element_text(color = "white", size = 15),
+      axis.title.y = element_text(size = 20),
+      legend.title = element_text(size = 20), 
+      legend.text = element_text(size = 15),
+
+      panel.grid.major = element_blank(),
+      panel.grid.minor = element_blank()
+      ) 
+```
+
+```{r}
+matrix_legend <- UpSet_matrix
+UpSet_matrix <- UpSet_matrix + theme(legend.position = "none")
+```
+
+```{r}
+UpSet_int_bars <- ggplot(freqs %>% subset(!(set %in% c("l","p","r","t"))), aes(x = set, y = freq, fill = group)) +
+  geom_bar(stat = "identity", position = position_dodge2(), color = "black", width = 0.7) +
+  scale_fill_manual(values = c("#F58868", "#B4FFF5", "#A154FF")) + 
+  scale_x_discrete(limits = abbreviated_combination_list, expand = c(0,0)) + 
+  xlab(NULL) + ylab("Number of intersecting DEGs") + labs(title = NULL, fill = "Experiment") + theme_bw() +
+  ylim(c(0,5000)) + 
+  # geom_text(aes(label = freq, group = factor(group, levels = c(1,2,3))), position = position_dodge2(width = 0.7), hjust = -0.3, angle = 90) +
+  theme(panel.background = element_rect(fill = "white"), plot.margin = unit(c(0.5,0.5,0.5,0.5), "lines"), 
+        panel.border = element_blank(), 
+        legend.position = "right",
+        legend.title = element_text(size = 20), 
+        legend.text = element_text(size = 15),
+        axis.ticks.x = element_blank(),
+        axis.text.x = element_blank(),
+        axis.text.y = element_text(size = 15),
+        axis.title.y = element_text(size = 20),
+        panel.grid.major.x = element_blank())
+```
+
+```{r}
+bar_legend <- UpSet_int_bars
+UpSet_int_bars <- UpSet_int_bars + theme(legend.position = "none")
+```
+
+```{r}
+legendary <- plot_grid(get_legend(bar_legend), get_legend(matrix_legend), ncol = 1, axis = "l")
+```
+
+```{r}
+UpSet_set_bars <- ggplot(freqs %>% subset(set %in% c("l","p", "r", "t")), aes(x = set, y = freq, fill = factor(group, levels = c(3,2,1)))) + 
+  geom_bar(stat = "identity", position = "dodge", color = "black", width = 0.8) + 
+  scale_fill_manual(values = c( "#A154FF", "#B4FFF5", "#F58868")) + 
+  scale_x_discrete(limits = c("t", "r", "p", "l"), labels = c("tda∆1", "Reference", "PDS", "log"), expand = c(0.15,0.15)) + 
+  # coord_cartesian(ylim = c(0,6000)) +
+  # scale_y_reverse() +
+  coord_flip(ylim = c(0,6000)) +
+  xlab(NULL) + ylab("Number of DEGs") + 
+  # geom_text(aes(label = freq, group = factor(group, levels = c(3,2,1))), position = position_dodge2(width = 0.8), hjust = -0.2) +
+  theme(panel.background = element_rect(fill = "white"),
+        plot.margin = unit(c(-0.2,0.5,0.5,0.5), "lines"), 
+        legend.position = "none",
+        panel.border = element_blank(),
+        axis.text.x = element_text(size = 15),
+        axis.title.x = element_text(size = 20),
+        axis.text.y = element_text(size = 15),
+        axis.ticks.y = element_blank()
+       
+        
+  )
+```
+
+```{r}
+UpSet_plot <- plot_grid(UpSet_int_bars, legendary, UpSet_matrix, UpSet_set_bars, ncol = 2, rel_widths = c(3,1), rel_heights = c(2,1))
+```
+For Figure 2: end
+
+For Figure 3: start
+```{r}
+# Loads bio proc geneset. Also creates an object "mt" which contains the genes in the ontology mitochondrial translation
+GS_sparse_bproc <- readRDS("./data/db/biological_process.rds")
+GS_sparse_bproc <- loadGSC(GS_sparse_bproc)
+mt <- GS_sparse_bproc$gsc$`mitochondrial translation` %>% .[(grepl("^Y",.))] %>% subset(. %in% normalized_counts_nice_1$Gene_stable_ID)
+```
+
+```{r}
+# Loads mol func geneset. Creates object "mf" which contains each gene in mt and all its mol func GO's 
+GS_sparse_mfunc <- readRDS("./data/db/molecular_function.rds")
+
+mf <- GS_sparse_mfunc %>% subset(Ensembl %in% mt) 
+```
+
+```{r, echo=F}
+set.seed(819230)
+GSEA_Ref_1 <- FGSEA_wrap(res_table_Ref_nice_1, GS_sparse_bproc)
+GSEA_Ref_2 <- FGSEA_wrap(res_table_Ref_nice_2, GS_sparse_bproc)
+GSEA_Ref_3 <- FGSEA_wrap(res_table_Ref_nice_3, GS_sparse_bproc)
+GSEA_TDA_1 <- FGSEA_wrap(res_table_TDA_nice_1, GS_sparse_bproc)
+GSEA_TDA_2 <- FGSEA_wrap(res_table_TDA_nice_2, GS_sparse_bproc)
+GSEA_TDA_3 <- FGSEA_wrap(res_table_TDA_nice_3, GS_sparse_bproc)
+```
+
+
+```{r, echo=F}
+save_r_object(GSEA_Ref_1, "./r_objects/Exp1/")
+save_r_object(GSEA_Ref_2, "./r_objects/Exp2/")
+save_r_object(GSEA_Ref_3, "./r_objects/Exp3/")
+
+save_r_object(GSEA_TDA_1, "./r_objects/Exp1/")
+save_r_object(GSEA_TDA_2, "./r_objects/Exp2/")
+save_r_object(GSEA_TDA_3, "./r_objects/Exp3/")
+```
+
+```{r, echo=F}
+GSEA_Ref_1 <- readRDS("./r_objects/Exp1/GSEA_Ref_1.rds")
+GSEA_Ref_2 <- readRDS("./r_objects/Exp2/GSEA_Ref_2.rds")
+GSEA_Ref_3 <- readRDS("./r_objects/Exp3/GSEA_Ref_3.rds")
+GSEA_TDA_1 <- readRDS("./r_objects/Exp1/GSEA_TDA_1.rds")
+GSEA_TDA_2 <- readRDS("./r_objects/Exp2/GSEA_TDA_2.rds")
+GSEA_TDA_3 <- readRDS("./r_objects/Exp3/GSEA_TDA_3.rds")
+```
+
+```{r}
+genesetdot <- gsdot(GSEA_Ref_1,GSEA_Ref_2,GSEA_Ref_3,GSEA_TDA_1,GSEA_TDA_2,GSEA_TDA_3)
+```
+
+
+```{r}
+all_samples <- data.frame(Sample = levels(interaction(c(1,2,3),c("Ref", "tda1∆"), c("log", "PDS"), 1:6, sep = "_")))
+rownames(all_samples) <- all_samples$Sample
+all_samples <- all_samples %>%  mutate(Experiment = as.factor(sapply(strsplit(all_samples$Sample, "_"), "[[",1)), 
+                                       Strain = as.factor(sapply(strsplit(all_samples$Sample, "_"), "[[",2)), 
+                                       Phase = as.factor(sapply(strsplit(all_samples$Sample, "_"), "[[",3)), 
+                                       Replicate = as.factor(sapply(strsplit(all_samples$Sample, "_"), "[[",4))) %>% 
+  arrange(Experiment, Phase, Strain, Replicate) %>% mutate(ID = paste0(if_else(Strain == "Ref", "R", "T"), Replicate, if_else(Phase == "log", "Pre", "Post")))
+```
+
+```{r}
+exp1_samples <- all_samples %>% subset(Experiment == 1) %>% subset(ID %in% colnames(normalized_counts_1))
+exp2_samples <- all_samples %>% subset(Experiment == 2) %>% subset(ID %in% colnames(normalized_counts_2))
+exp3_samples <- all_samples %>% subset(Experiment == 3) %>% subset(ID %in% colnames(normalized_counts_3))
+```
+
+```{r}
+normalized_counts_1_reordered <- normalized_counts_1[, c(1,2,3,7,8,9,4,5,6,10,11,12)]
+normalized_counts_2_reordered <- normalized_counts_2[, c(seq(1,6), seq(12,17), seq(7,11), seq(18,22))]
+normalized_counts_3_reordered <- normalized_counts_3[, c(seq(1,5), seq(12,17), seq(6,11), seq(18,23))]
+```
+
+```{r}
+h1 <- customheat(normalized_counts_1_reordered, 1, exp1_samples, mf, legend = F)
+h2 <- customheat(normalized_counts_2_reordered, 2, exp2_samples, mf, legend = F)
+h3 <- customheat(normalized_counts_3_reordered, 3, exp3_samples, mf, legend = T)
+mfe <- c()
+for (i  in unique(mf$GSname)) {
+  tmp <- mf %>% subset(GSname == i) %>% pull(Ensembl)
+    if (length(tmp) >= 5) {
+      mfe <- c(mfe, rep(i, length(tmp)))
+    }
+}
+mfcol <- c("#8dd3c7","#ffffb3","#bebada","#fb8072","#80b1d3","#fdb462")
+heatmf <- Heatmap(mfe, name = "MolFunc", col = mfcol, row_title = NULL, column_title = NULL, border = T, heatmap_legend_param = list(title_gp = gpar(fontsize = 15, fontface = "bold"), labels_gp = gpar(fontsize = 12), title = "Molecular Function"), width = unit(0.5, "cm"))
+
+htmp <- draw(h1+h2+h3+heatmf, row_split = mfe)
+
+#13 width 10 height
+
+```
+For Figure 3: end
+
+For Figure 4: start
+```{r}
+Refs <- rbind(sig_Ref_nice_1, sig_Ref_nice_2, sig_Ref_nice_3)
+TDAs <- rbind(sig_TDA_nice_1, sig_TDA_nice_2, sig_TDA_nice_3)
+RnT_1 <- sig_Ref_nice_1 %>% subset(!(Gene_stable_ID %in% TDAs$Gene_stable_ID))
+RnT_2 <- sig_Ref_nice_2 %>% subset(!(Gene_stable_ID %in% TDAs$Gene_stable_ID))
+RnT_3 <- sig_Ref_nice_3 %>% subset(!(Gene_stable_ID %in% TDAs$Gene_stable_ID))
+
+TnR_1 <- sig_TDA_nice_1 %>% subset(!(Gene_stable_ID %in% Refs$Gene_stable_ID))
+TnR_2 <- sig_TDA_nice_2 %>% subset(!(Gene_stable_ID %in% Refs$Gene_stable_ID))
+TnR_3 <- sig_TDA_nice_3 %>% subset(!(Gene_stable_ID %in% Refs$Gene_stable_ID))
+```
+
+```{r}
+intersect_RnT <- intersectionalize(RnT_1, RnT_2, RnT_3)
+intersect_TnR <- intersectionalize(TnR_1, TnR_2, TnR_3)
+```
+
+```{r}
+# Picks intersecting DEGs to plot and sets the maximum for the y-axis.
+intersect_RnT <- intersect_RnT %>% subset(abs(signs) == 3)
+intersect_RnT_genes <- data.frame(ID = intersect_RnT$Gene_stable_ID, Gene = intersect_RnT$Gene_name)
+RnT_maxes <- data.frame(one = rowMax(normalized_counts_1 %>% subset(rownames(.) %in% intersect_RnT_genes$ID)),
+                        two = rowMax(normalized_counts_2 %>% subset(rownames(.) %in% intersect_RnT_genes$ID)),
+                        tre = rowMax(normalized_counts_3 %>% subset(rownames(.) %in% intersect_RnT_genes$ID))) 
+intersect_RnT_genes <- intersect_RnT_genes %>% mutate(RnT_maxes = round(apply(RnT_maxes, 1, max),-2))
+
+
+intersect_TnR <- intersect_TnR %>% subset(abs(signs) == 3)
+intersect_TnR_genes <- data.frame(ID = intersect_TnR$Gene_stable_ID, Gene_name = intersect_TnR$Gene_name)
+TnR_maxes <- data.frame(one = rowMax(normalized_counts_1 %>% subset(rownames(.) %in% intersect_TnR_genes$ID)),
+                        two = rowMax(normalized_counts_2 %>% subset(rownames(.) %in% intersect_TnR_genes$ID)),
+                        tre = rowMax(normalized_counts_3 %>% subset(rownames(.) %in% intersect_TnR_genes$ID))) 
+intersect_TnR_genes <- intersect_TnR_genes %>% mutate(TnR_maxes = round(apply(TnR_maxes, 1, max),-2))
+```
+
+```{r}
+# Titles for the boxplots
+xtit <- ggplot() + annotate("text", x = 1, y = 1, size = 6,label = "Experiments") + theme_void()
+ytit <- ggplot() + annotate("text", x = 1, y = 1, size = 6, angle = 90,label = "Normalized gene counts") + theme_void()
+
+Ref_tit <- ggplot() + geom_rect(aes(xmin = 0, xmax = 1, ymin = 0, ymax = 1), fill = "#8ECA4F", color = "black") + annotate("text", x = 0.5, y = 0.5, size = 15, label = "Reference", angle = 90) + coord_cartesian(expand = F) + theme_void() + theme(plot.margin = unit(c(0.1,0.1,0.1,0.1), "lines"))
+
+TDA_tit <- ggplot() + geom_rect(aes(xmin = 0, xmax = 1, ymin = 0, ymax = 1), fill = "#E20E6F", color = "black") + annotate("text", x = 0.5, y = 0.5, size = 15, label = "tda1∆", color = "white", angle = 90) + coord_cartesian(expand = F) + theme_void() + theme(plot.margin = unit(c(.1,.1,.1,.1), "lines"))
+
+RnT_tit <- ggplot() + geom_rect(aes(xmin = 0, xmax = 1, ymin = 0, ymax = 1), fill = "#558B1D", color = "black") + annotate("text", x = 0.5, y = 0.5, size = 12, label = "DEGs in Reference but not tda1∆", color = "white") + coord_cartesian(expand = F) + theme_void() + theme(plot.margin = unit(c(0.1,0.1,0.1,0.1), "lines"))
+
+TnR_tit <- ggplot() + geom_rect(aes(xmin = 0, xmax = 1, ymin = 0, ymax = 1), fill = "#FFC2DE", color = "black") + annotate("text", x = 0.5, y = 0.5, size = 12, label = "DEGs in tda1∆ but not Reference") + coord_cartesian(expand = F) + theme_void() + theme(plot.margin = unit(c(0.1,0.1,0.1,0.1), "lines"))
+
+empty <- ggplot() + theme_void()
+```
+
+
+```{r}
+# Reference not TDA plot
+i_RnT_graphs_r <- apply(intersect_RnT_genes, 1, function(x) gene_checker_deluxe(normalized_counts_nice_1, normalized_counts_nice_2, normalized_counts_nice_3, x[2], "Ref", lims = as.numeric(c(0,x[3]))))
+i_RnT_graphs_t <- apply(intersect_RnT_genes, 1, function(x) gene_checker_deluxe(normalized_counts_nice_1, normalized_counts_nice_2, normalized_counts_nice_3, x[2], "TDA", lims = as.numeric(c(0,x[3]))))
+i_RnT_legend <-  get_legend(i_RnT_graphs_r[[1]])
+i_RnT_graphs_r <- lapply(i_RnT_graphs_r, function(x) x + theme(legend.position = "none", axis.title.x = element_blank(), axis.title.y = element_blank()))
+i_RnT_graphs_t <- lapply(i_RnT_graphs_t, function(x) x + theme(legend.position = "none", axis.title.x = element_blank(), axis.title.y = element_blank()))
+```
+
+```{r}
+# TDA not Reference plot
+i_TnR_graphs_r <- apply(intersect_TnR_genes, 1, function(x) gene_checker_deluxe(normalized_counts_nice_1, normalized_counts_nice_2, normalized_counts_nice_3, x[2], "Ref", lims = as.numeric(c(0,x[3]))))
+i_TnR_graphs_t <- apply(intersect_TnR_genes, 1, function(x) gene_checker_deluxe(normalized_counts_nice_1, normalized_counts_nice_2, normalized_counts_nice_3, x[2], "TDA", lims = as.numeric(c(0,x[3]))))
+
+i_TnR_legend <-  get_legend(i_TnR_graphs_r[[1]])
+i_TnR_graphs_r <- lapply(i_TnR_graphs_r, function(x) x + theme(legend.position = "none", axis.title.x = element_blank(), axis.title.y = element_blank()))
+i_TnR_graphs_t <- lapply(i_TnR_graphs_t, function(x) x + theme(legend.position = "none", axis.title.x = element_blank(), axis.title.y = element_blank()))
+```
+
+```{r}
+# Stitches together the final RnT plot. w = 20, h = 10?
+i_RnT1 <- plot_grid(i_RnT_graphs_r[[1]], i_RnT_graphs_r[[2]], i_RnT_graphs_r[[3]], i_RnT_graphs_r[[4]], nrow = 1)
+i_RnT2 <- plot_grid(i_RnT_graphs_t[[1]], i_RnT_graphs_t[[2]], i_RnT_graphs_t[[3]], i_RnT_graphs_t[[4]], nrow = 1)
+
+i_RnT1 <- plot_grid(i_RnT1, xtit, ncol = 1, rel_heights =c(10,0.7))
+i_RnT2 <- plot_grid(i_RnT2, xtit, ncol = 1, rel_heights =c(10,0.7))
+
+i_RnT1 <- plot_grid(Ref_tit, ytit, i_RnT1, i_RnT_legend, nrow = 1, rel_widths = c(0.4,0.5,10,1)) + theme(plot.background = element_rect(color = "black", linewidth = 1))
+i_RnT2 <- plot_grid(TDA_tit, ytit, i_RnT2, i_RnT_legend, nrow = 1, rel_widths = c(0.4,0.5,10,1)) + theme(plot.background = element_rect(color = "black", linewidth = 1))
+
+i_RnT <- plot_grid(i_RnT1, empty, i_RnT2, nrow = 3, rel_heights = c(1,0.05,1))
+
+RnT_tit2 <- plot_grid(empty, RnT_tit, nrow = 1, rel_widths = c(0.5, 0.5+10+1))
+
+i_RnT <- plot_grid(RnT_tit2, i_RnT, nrow = 2, rel_heights = c(0.5,10))
+```
+
+```{r}
+# Stitches together the final TnR plot. w = 20, h = 10?
+i_TnR1 <- plot_grid(i_TnR_graphs_r[[3]], i_TnR_graphs_r[[4]], i_TnR_graphs_r[[5]], i_TnR_graphs_r[[6]], nrow = 1)
+i_TnR2 <- plot_grid(i_TnR_graphs_t[[3]], i_TnR_graphs_t[[4]], i_TnR_graphs_t[[5]], i_TnR_graphs_t[[6]], nrow = 1)
+
+i_TnR1 <- plot_grid(i_TnR1, xtit, ncol = 1, rel_heights =c(10,0.7))
+i_TnR2 <- plot_grid(i_TnR2, xtit, ncol = 1, rel_heights =c(10,0.7))
+
+i_TnR1 <- plot_grid(Ref_tit, ytit, i_TnR1, i_TnR_legend, nrow = 1, rel_widths = c(0.5,0.5,10,1)) + theme(plot.background = element_rect(color = "black", linewidth = 1))
+i_TnR2 <- plot_grid(TDA_tit, ytit, i_TnR2, i_TnR_legend, nrow = 1, rel_widths = c(0.5,0.5,10,1)) + theme(plot.background = element_rect(color = "black", linewidth = 1))
+
+i_TnR <- plot_grid(i_TnR1, empty, i_TnR2, nrow = 3, rel_heights = c(1,0.05,1))
+
+TnR_tit2 <- plot_grid(empty, TnR_tit, nrow = 1, rel_widths = c(0.5, 0.5+10+1))
+
+i_TnR <- plot_grid(TnR_tit2, i_TnR, nrow = 2, rel_heights = c(0.5,10))
+```
+For Figure 4: end
+
+For section about TF: start
+```{r}
+# Manual curation of gene names that did not exist in the tx2gene file
+extra <- data.frame(tx_id = c("YFL054C", "YFL052C", "YLR312C", "YSC0013", "YSC0014", "YSC0019", "YSC0015"), 
+                  ensgene = c("YFL054C", "YFL052C", "YLR312C", "YSC0013", "YSC0014", "YSC0019", "YSC0015"), 
+                  symbol = c("AQY3", "ZNF1", "ATG39", "MAL61", "MAL62", "MEL1", "MAL63"))
+
+tx2gene2 <- rbind(tx2gene, extra)
+```
+
+
+```{r}
+HAP4 <- read.table("./data/db/HAP4_yeastract.txt", sep = "\t", header =T, quote = "") %>% mutate(GSname = "Hap4p") %>% dplyr::select(tx_id, GSname)
+MIG1 <- read.table("./data/db/MIG1_yeastract.txt", sep = "\t", header =T, quote = "") %>% mutate(GSname = "Mig1p") %>% dplyr::select(tx_id, GSname)
+
+GStest <- rbind(HAP4, MIG1) %>% rename(Ensembl = tx_id) %>% loadGSC(.)
+```
+
+```{r}
+resList <- list(res_table_log_nice_1,
+                res_table_log_nice_2,
+                res_table_log_nice_3,
+                res_table_PDS_nice_1,
+                res_table_PDS_nice_2,
+                res_table_PDS_nice_3)
+```
+
+```{r}
+myseed <- 819230
+TF_tests <- megatest(resList,GStest, seed = myseed)
+```
+For section about TF: end
+
+Supplementary tables
+```{r}
+xlsx_wrapper(raw_counts_nice_1, 
+             raw_counts_nice_2, 
+             raw_counts_nice_3, 
+             filename = "./tables/Supplementary_table_2-1.xlsx")
+```
+
+```{r}
+xlsx_wrapper(sig_log_nice_1, 
+             sig_log_nice_2, 
+             sig_log_nice_3, 
+             filename = "./tables/Supplementary_table_2-2.xlsx")
+```
+
+```{r}
+xlsx_wrapper(sig_PDS_nice_1, 
+             sig_PDS_nice_2, 
+             sig_PDS_nice_3, 
+             filename = "./tables/Supplementary_table_2-3.xlsx")
+```
+
+```{r}
+xlsx_wrapper(sig_Ref_nice_1, 
+             sig_Ref_nice_2, 
+             sig_Ref_nice_3, 
+             filename = "./tables/Supplementary_table_2-4.xlsx")
+```
+
+```{r}
+xlsx_wrapper(sig_TDA_nice_1, 
+             sig_TDA_nice_2, 
+             sig_TDA_nice_3, 
+             filename = "./tables/Supplementary_table_2-5.xlsx")
+```
+
+```{r}
+xlsx_wrapper(RnT_1, 
+             RnT_2, 
+             RnT_3, 
+             filename = "./tables/Supplementary_table_3-1.xlsx")
+```
+
+```{r}
+xlsx_wrapper(TnR_1, 
+             TnR_2, 
+             TnR_3, 
+             filename = "./tables/Supplementary_table_3-2.xlsx")
+```
+
+Export figures
+```{r}
+export2svg(UpSet_plot, c(12,8), filename = "./plots/Unedited/rawFig2.svg")
+```
+
+```{r}
+export2svg(genesetdot, c(12,6), filename = "./plots/Unedited/rawFig3A.svg")
+```
+
+```{r}
+export2svg(htmp, c(13,10), filename = "./plots/Unedited/rawFig3B.svg")
+```
+
+```{r}
+export2svg(i_RnT, c(20,10), filename = "./plots/Unedited/rawFig4A.svg")
+```
+
+```{r}
+export2svg(i_TnR, c(20,10), filename = "./plots/Unedited/rawFig4B.svg")
+```
+

@@ -1,0 +1,10 @@
+{
+    "salmon_version": "1.9.0",
+    "geneMap": "genes.gtf",
+    "threads": "6",
+    "libType": "ISF",
+    "targets": "genome.transcripts.fa",
+    "alignments": "W3_post.Aligned.toTranscriptome.out.bam",
+    "output": "W3_post",
+    "auxDir": "aux_info"
+}
